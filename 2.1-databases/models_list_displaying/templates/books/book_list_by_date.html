@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Книги за {{ current_date|date:"d.m.Y" }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .book {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+        .book-title {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .book-author {
+            color: #555;
+        }
+        .book-date {
+            color: #888;
+            font-size: 0.9em;
+        }
+        .nav {
+            margin: 20px 0;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .nav a {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            color: #333;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .nav a:hover {
+            background: #e0e0e0;
+            text-decoration: none;
+        }
+        .nav .disabled {
+            color: #aaa;
+            padding: 8px 16px;
+            background: #fafafa;
+            border-radius: 4px;
+            cursor: not-allowed;
+        }
+        .nav .current {
+            font-weight: bold;
+            color: #0066cc;
+            padding: 8px 16px;
+            background: #e6f0fa;
+            border-radius: 4px;
+        }
+        .empty {
+            color: #888;
+            text-align: center;
+            padding: 40px;
+        }
+        .info {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📚 Книги за {{ current_date|date:"d.m.Y" }}</h1>
+        <a href="{% url 'book_list' %}" style="color: #0066cc;">📋 Все книги</a>  <!-- ИСПРАВЛЕНО: убрал books: -->
+    </div>
+
+    {% if has_books %}
+        <div class="info">
+            📖 Найдено книг: {{ books|length }}
+        </div>
+
+        {% for book in books %}
+            <div class="book">
+                <div class="book-title">{{ book.name }}</div>  <!-- ИСПРАВЛЕНО: title → name -->
+                <div class="book-author">✍️ {{ book.author }}</div>
+                <div class="book-date">📅 {{ book.pub_date|date:"d.m.Y" }}</div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty">
+            <p>📭 Нет книг за {{ current_date|date:"d.m.Y" }}</p>
+        </div>
+    {% endif %}
+
+    <div class="nav">
+        {% if prev_date %}
+            <a href="{% url 'book_list_by_date' prev_date.year prev_date.month prev_date.day %}">  <!-- ИСПРАВЛЕНО: убрал books: -->
+                ⬅️ {{ prev_date|date:"d.m.Y" }}
+            </a>
+        {% else %}
+            <span class="disabled">⬅️ Нет предыдущих</span>
+        {% endif %}
+
+        <span class="current">{{ current_date|date:"d.m.Y" }}</span>
+
+        {% if next_date %}
+            <a href="{% url 'book_list_by_date' next_date.year next_date.month next_date.day %}">  <!-- ИСПРАВЛЕНО: убрал books: -->
+                {{ next_date|date:"d.m.Y" }} ➡️
+            </a>
+        {% else %}
+            <span class="disabled">Нет следующих ➡️</span>
+        {% endif %}
+    </div>
+
+    <div style="text-align: center;">
+        <a href="{% url 'book_list' %}" class="back-link">← Вернуться ко всем книгам</a>  <!-- ИСПРАВЛЕНО: убрал books: -->
+    </div>
+</body>
+</html>
