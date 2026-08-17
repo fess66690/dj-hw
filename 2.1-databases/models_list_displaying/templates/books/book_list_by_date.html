@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Книги за {{ current_date|date:"Y-m-d" }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="header">
+            <h1><a href="{% url 'book_list' %}">Каталог</a></h1>
+            <h2>Книги за {{ current_date|date:"Y-m-d" }}</h2>
+        </div>
+
+        <!-- Навигация между датами -->
+        <div class="navigation">
+            <div class="row">
+                <div class="col-4">
+                    {% if prev_date %}
+                        <a href="{% url 'book_list_by_date' prev_date.year prev_date.month prev_date.day %}">
+                            ← {{ prev_date|date:"Y-m-d" }}
+                        </a>
+                    {% else %}
+                        <span class="disabled">← Нет</span>
+                    {% endif %}
+                </div>
+                <div class="col-4 text-center">
+                    <span class="current">{{ current_date|date:"Y-m-d" }}</span>
+                </div>
+                <div class="col-4 text-right">
+                    {% if next_date %}
+                        <a href="{% url 'book_list_by_date' next_date.year next_date.month next_date.day %}">
+                            {{ next_date|date:"Y-m-d" }} →
+                        </a>
+                    {% else %}
+                        <span class="disabled">Нет →</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Книги -->
+        <div class="row">
+            {% for book in books %}
+                <div class="book col-md-4">
+                    <h2>{{ book.name }}</h2>
+                    <p>Автор: {{ book.author }}</p>
+                    <p>Дата: {{ book.pub_date|date:"Y-m-d" }}</p>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <p>📭 Нет книг за эту дату</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Ссылка назад -->
+        <div class="row">
+            <div class="col-12 text-center">
+                <a href="{% url 'book_list' %}">← Назад к каталогу</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
